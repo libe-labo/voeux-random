@@ -6,6 +6,8 @@ import LibeLaboLogo from 'libe-components/lib/blocks/LibeLaboLogo'
 import ArticleMeta from 'libe-components/lib/blocks/ArticleMeta'
 import BlockTitle from 'libe-components/lib/text-levels/BlockTitle'
 import Paragraph from 'libe-components/lib/text-levels/Paragraph'
+import AnnotationTitle from 'libe-components/lib/text-levels/AnnotationTitle'
+import Annotation from 'libe-components/lib/text-levels/Annotation'
 import parseTsv from 'libe-utils/parse-tsv'
 
 import styles from './app.module.css'
@@ -95,7 +97,7 @@ export default class App extends Component {
       const reach = await window.fetch(this.props.spreadsheet)
       if (!reach.ok) throw reach
       const data = await reach.text()
-      const parsedData = parseTsv(data, [6]) // Parse sheet here
+      const parsedData = parseTsv(data, [7]) // Parse sheet here
       const sentences = parsedData[0].filter(e => e.themes !== '' && e.sentence !== '')
       this.setState({
         error_sheet: null,
@@ -134,7 +136,7 @@ export default class App extends Component {
         paragraphs.forEach(p => {
           p.style.marginLeft = `${Math.random() * 20}px`
           p.style.transform = `translateY(${(Math.random() * 20) - 10}px)`
-          p.style.filter = 'blur(5px)'
+          p.style.filter = 'blur(2px)'
         })
       },
       () => {
@@ -190,7 +192,14 @@ export default class App extends Component {
     return (
       <span className={styles.sentence} key={e.sentence}>
         <span>{e.sentence + ' '}</span>
-        <span className={styles.tooltip} key={`${e.sentence} tooltip`}>{`${e.president}  ${e.date.substring(0, 4)}`}</span>
+        <span className={styles.tooltip} key={`<${e.sentence} tooltip`}>
+          <a
+            href={e.url}
+            target="_blank"
+            rel="noopener noreferrer">
+            {`${e.president} ${e.date.substring(0, 4)}`}
+          </a>
+        </span>
       </span>
     )
   }
