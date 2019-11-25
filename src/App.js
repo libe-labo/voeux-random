@@ -2,15 +2,10 @@ import React, { Component } from 'react'
 import Loader from 'libe-components/lib/blocks/Loader'
 import LoadingError from 'libe-components/lib/blocks/LoadingError'
 import ShareArticle from 'libe-components/lib/blocks/ShareArticle'
-import LibeLaboLogo from 'libe-components/lib/blocks/LibeLaboLogo'
 import ArticleMeta from 'libe-components/lib/blocks/ArticleMeta'
 import BlockTitle from 'libe-components/lib/text-levels/BlockTitle'
 import Paragraph from 'libe-components/lib/text-levels/Paragraph'
-import AnnotationTitle from 'libe-components/lib/text-levels/AnnotationTitle'
-import Annotation from 'libe-components/lib/text-levels/Annotation'
 import parseTsv from 'libe-utils/parse-tsv'
-
-import styles from './app.module.css'
 
 export default class App extends Component {
   /* * * * * * * * * * * * * * * * *
@@ -24,7 +19,8 @@ export default class App extends Component {
     this.state = {
       loading_sheet: true,
       error_sheet: null,
-      data_sheet: []
+      data_sheet: [],
+      selectedSentences: []
     }
     this.setKonami = this.setKonami.bind(this)
     this.fetchSheet = this.fetchSheet.bind(this)
@@ -33,6 +29,8 @@ export default class App extends Component {
     this.getParagraph = this.getParagraph.bind(this)
     this.getRandomSentence = this.getRandomSentence.bind(this)
     this.renderSentence = this.renderSentence.bind(this)
+    this.getParams = this.getParams.bind(this)
+    this.generateShareLink = this.generateShareLink.bind(this)
   }
 
   /* * * * * * * * * * * * * * * * *
@@ -51,12 +49,11 @@ export default class App extends Component {
     const konami = '38,38,40,40,37,39,37,39,66,65'
     const keys = []
     const listener = (e) => {
-    	keys.push(e.keyCode)
-    	if (keys.join(',').includes(konami)) {
-    		document.removeEventListener('keydown', listener)
-        console.log(this.props.meta.konami)
-    		window.location.href = this.props.meta.konami
-    	}
+      keys.push(e.keyCode)
+      if (keys.join(',').includes(konami)) {
+        document.removeEventListener('keydown', listener)
+        window.location.href = this.props.meta.konami
+      }
     }
     document.addEventListener('keydown', listener)
   }
@@ -97,7 +94,7 @@ export default class App extends Component {
       const reach = await window.fetch(this.props.spreadsheet)
       if (!reach.ok) throw reach
       const data = await reach.text()
-      const parsedData = parseTsv(data, [7]) // Parse sheet here
+      const parsedData = parseTsv(data, [5]) // Parse sheet here
       const sentences = parsedData[0].filter(e => e.themes !== '' && e.sentence !== '')
       this.setState({
         error_sheet: null,
@@ -108,9 +105,7 @@ export default class App extends Component {
             ...e
           }
         }),
-        // startSentences: sentences.filter(e => +e.sentenceIndex === 0),
-        // endSentences: sentences.filter(e => +e.sentenceIndex === +e.speechLength - 1),
-        selectedSentences: [],
+        selectedSentences: this.getParams(),
         loading_sheet: false
       })
       return data
@@ -130,7 +125,7 @@ export default class App extends Component {
 
   handleGeneration () {
     this.setState({ selectedSentences: [] })
-    const paragraphs = document.querySelectorAll(`.${styles.speech} p`)
+    const paragraphs = document.querySelectorAll('.speech .lblb-paragraph')
     wiggle(0, 20, 20,
       () => {
         paragraphs.forEach(p => {
@@ -171,7 +166,9 @@ export default class App extends Component {
       return false
     })
     let alea = Math.floor(Math.random() * selection.length)
-    while (this.state.selectedSentences.includes(selection[alea].id)) { alea = Math.floor(Math.random() * selection.length) }
+    while (this.state.selectedSentences.includes(selection[alea].id)) {
+      alea = Math.floor(Math.random() * selection.length)
+    }
     this.state.selectedSentences.push(selection[alea].id)
     return (selection[alea])
   }
@@ -179,10 +176,10 @@ export default class App extends Component {
   getParagraph (length, themes) {
     const paragraph = []
     for (let i = 0; i < length; i++) {
-      const size = Math.random() > 0.66 ? (Math.random() > 0.5 ? 'short' : 'medium') : 'long'
+      const size = Math.random() > 0.8 ? (Math.random() > 0.5 ? 'short' : 'medium') : 'long'
       const sentence = this.getRandomSentence(size, themes)
+      console.log(sentence.sentence, sentence.themes)
       themes = Math.random() < 0.8 ? sentence.themes : ['bullshit']
-      console.log(themes)
       paragraph.push(sentence)
     }
     return paragraph
@@ -190,9 +187,9 @@ export default class App extends Component {
 
   renderSentence (e) {
     return (
-      <span className={styles.sentence} key={e.sentence}>
+      <span className='.sentence' key={e.sentence}>
         <span>{e.sentence + ' '}</span>
-        <span className={styles.tooltip} key={`<${e.sentence} tooltip`}>
+        <span className='sentence__tooltip' key={`${e.sentence} tooltip`}>
           <a
             href={e.url}
             target="_blank"
@@ -202,6 +199,17 @@ export default class App extends Component {
         </span>
       </span>
     )
+  }
+
+  getParams () {
+    const res = new window.URL(window.location.href).searchParams.get('res')
+    return res ? window.atob(window.decodeURI(res)).split(';').map(e => +e) : []
+  }
+
+  generateShareLink () {
+    const data = this.state.selectedSentences.join(';')
+    console.log(`${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`)
+    return `${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`
   }
 
   /* * * * * * * * * * * * * * * * *
@@ -221,17 +229,49 @@ export default class App extends Component {
     if (state.loading_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-loader'><Loader /></div></div>
     if (state.error_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-error'><LoadingError /></div></div>
 
-    console.log(state.sentences)
-
     /* Display component */
     return (
       <div className={classes.join(' ')}>
         <div className='lblb-default-apps-footer'>
-          <BlockTitle>Essayez notre générateur de vœux présidentiels !</BlockTitle>
-          <button className={styles.generateButton} onClick={this.handleGeneration}>
+          <BlockTitle>Essayez notre générateur de vœux présidentiels&nbsp;!</BlockTitle>
+          <button className='generateButton' onClick={this.handleGeneration}>
             <Paragraph>Générer</Paragraph>
           </button>
-          <div className={styles.speech}>
+          {state.selectedSentences.length > 0 && (
+            <div className='speech'>
+              <Paragraph small>
+                {state.selectedSentences.slice(0, 2)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {state.selectedSentences.slice(2, 6)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {state.selectedSentences.slice(6, 10)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {state.selectedSentences.slice(10, 14)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {state.selectedSentences.slice(14, 17)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {state.selectedSentences.slice(17)
+                  .map(index => state.sentences[index])
+                  .map(this.renderSentence)}
+              </Paragraph>
+            </div>
+          )}
+          {state.selectedSentences.length === 0 && (<div className='speech'>
             <Paragraph small>
               {this.getParagraph(1, ['first'])
                 .map(this.renderSentence)}
@@ -251,20 +291,25 @@ export default class App extends Component {
                 .map(this.renderSentence)}
             </Paragraph>
             <Paragraph small>
+              {this.getParagraph(3, ['france'])
+                .map(this.renderSentence)}
+            </Paragraph>
+            <Paragraph small>
               {this.getParagraph(1, ['last'])
                 .map(this.renderSentence)}
             </Paragraph>
+          </div>)}
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <BlockTitle>Partagez votre discours&nbsp;!</BlockTitle>
+            <ShareArticle short iconsOnly tweet={props.meta.tweet} url={this.generateShareLink()} />
           </div>
-          <ShareArticle short iconsOnly tweet={props.meta.tweet} url={props.meta.url} />
           <ArticleMeta
             publishedOn='02/09/2019 17:13' updatedOn='03/09/2019 10:36' authors={[
-              { name: 'Jean-Sol Partre', role: '', link: 'www.liberation.fr' },
+              { name: 'Savinien de Rivet', role: '', link: 'www.liberation.fr' },
               { name: 'Maxime Fabas', role: 'Production', link: 'lol.com' },
-              { name: 'Savinien de Rivet', role: 'Production', link: 'lol.com' },
               { name: 'Tom Février', role: 'Production', link: 'lol.com' }
             ]}
           />
-          <LibeLaboLogo target='blank' />
         </div>
       </div>
     )
