@@ -187,7 +187,7 @@ export default class App extends Component {
 
   renderSentence (e) {
     return (
-      <span className='.sentence' key={e.sentence}>
+      <span className='sentence' key={e.sentence}>
         <span>{e.sentence + ' '}</span>
         <span className='sentence__tooltip' key={`${e.sentence} tooltip`}>
           <a
