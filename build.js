@@ -1,6 +1,8 @@
 const { promisify } = require('util')
 const { exec } = require('child_process')
 const { readFile, writeFile } = require('fs')
+const fetch = require('node-fetch')
+const { parseTsv } = require('libe-utils')
 const execPromise = promisify(exec)
 const cheerio = require('cheerio')
 const config = require('./src/config')
@@ -25,6 +27,15 @@ async function writeFilePromise (path, data, encoding = 'utf8') {
   return result
 }
 
+async function fetchSheet (spreadsheet) {
+  const reach = await fetch(spreadsheet)
+  if (!reach.ok) throw reach
+  const data = await reach.text()
+  const meta = parseTsv(data, [5, 5])[1][0]
+  console.log(meta)
+  return meta
+}
+
 async function build () {
   // Build app
   const { stdout, stderr } = await execPromise('react-scripts build')
@@ -38,7 +49,9 @@ async function build () {
 
   // Add meta tags
   console.log('\nAdding meta tags')
-  const { title, url, description, author, image } = config.meta
+  console.log(config.spreadsheet)
+  console.log(await fetchSheet(config.spreadsheet) )
+  const { title, url, description, author, image } = await fetchSheet(config.spreadsheet)
   const $ = cheerio.load(fileData)
   $('head').append(`
     <title>Libération.fr – ${title}</title>

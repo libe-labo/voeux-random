@@ -5,6 +5,7 @@ import ShareArticle from 'libe-components/lib/blocks/ShareArticle'
 import ArticleMeta from 'libe-components/lib/blocks/ArticleMeta'
 import BlockTitle from 'libe-components/lib/text-levels/BlockTitle'
 import Paragraph from 'libe-components/lib/text-levels/Paragraph'
+import JSXInterpreter from 'libe-components/lib/logic/JSXInterpreter'
 import parseTsv from 'libe-utils/parse-tsv'
 
 export default class App extends Component {
@@ -22,9 +23,9 @@ export default class App extends Component {
       data_sheet: [],
       selectedSentences: []
     }
-    this.setKonami = this.setKonami.bind(this)
     this.fetchSheet = this.fetchSheet.bind(this)
     this.fetchCredentials = this.fetchCredentials.bind(this)
+    this.wiggle = this.wiggle.bind(this)
     this.handleGeneration = this.handleGeneration.bind(this)
     this.getParagraph = this.getParagraph.bind(this)
     this.getRandomSentence = this.getRandomSentence.bind(this)
@@ -39,23 +40,9 @@ export default class App extends Component {
    *
    * * * * * * * * * * * * * * * * */
   componentDidMount () {
-    this.setKonami()
     this.fetchCredentials()
     if (this.props.spreadsheet) return this.fetchSheet()
     return this.setState({ loading_sheet: false })
-  }
-
-  setKonami () {
-    const konami = '38,38,40,40,37,39,37,39,66,65'
-    const keys = []
-    const listener = (e) => {
-      keys.push(e.keyCode)
-      if (keys.join(',').includes(konami)) {
-        document.removeEventListener('keydown', listener)
-        window.location.href = this.props.meta.konami
-      }
-    }
-    document.addEventListener('keydown', listener)
   }
 
   /* * * * * * * * * * * * * * * * *
@@ -123,26 +110,33 @@ export default class App extends Component {
     }
   }
 
+  wiggle (step = 0, limit = 1, delay = 0, action = () => {}, callback = () => {}) {
+    action()
+    return (step <= limit)
+      ? setTimeout(e => this.wiggle(step + 1, limit, delay, action, callback), delay)
+      : callback()
+  }
+
   handleGeneration () {
-    this.setState({ selectedSentences: [] })
     const paragraphs = document.querySelectorAll('.speech .lblb-paragraph')
-    wiggle(0, 20, 20,
+    this.wiggle(0, 20, 20,
       () => {
         paragraphs.forEach(p => {
-          p.style.marginLeft = `${Math.random() * 20}px`
-          p.style.transform = `translateY(${(Math.random() * 20) - 10}px)`
+          p.style.marginLeft = `${Math.random()}rem`
+          p.style.transform = `translateY(${(Math.random()) - 0.5}rem)`
           p.style.filter = 'blur(2px)'
         })
       },
       () => {
         paragraphs.forEach(p => {
-          p.style.marginLeft = '0px'
+          p.style.marginLeft = 0
           p.style.transform = ''
           p.style.filter = ''
         })
+        this.setState({ selectedSentences: [] })
+        this.forceUpdate()
       }
     )
-    this.forceUpdate()
   }
 
   getRandomSentence (size, themes) {
@@ -192,9 +186,10 @@ export default class App extends Component {
         <span className='sentence__tooltip' key={`${e.sentence} tooltip`}>
           <a
             href={e.url}
-            target="_blank"
-            rel="noopener noreferrer">
-            {`${e.president} ${e.date.substring(0, 4)}`}
+            target='_blank'
+            rel='noopener noreferrer'>
+            <JSXInterpreter
+              content={`${e.president} ${e.date.substring(0, 4)}`.replace(/ /g, '&nbsp;')} />
           </a>
         </span>
       </span>
@@ -203,11 +198,11 @@ export default class App extends Component {
 
   getParams () {
     const res = new window.URL(window.location.href).searchParams.get('res')
-    return res ? window.atob(window.decodeURI(res)).split(';').map(e => +e) : []
+    return res ? window.atob(window.decodeURI(res)).split(';').map(e => parseInt(e, 36)) : []
   }
 
   generateShareLink () {
-    const data = this.state.selectedSentences.join(';')
+    const data = this.state.selectedSentences.map(e => e.toString(36)).join(';')
     console.log(`${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`)
     return `${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`
   }
@@ -229,6 +224,8 @@ export default class App extends Component {
     if (state.loading_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-loader'><Loader /></div></div>
     if (state.error_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-error'><LoadingError /></div></div>
 
+    console.log(state.sentences)
+
     /* Display component */
     return (
       <div className={classes.join(' ')}>
@@ -236,6 +233,7 @@ export default class App extends Component {
           <BlockTitle>Essayez notre générateur de vœux présidentiels&nbsp;!</BlockTitle>
           <button className='generateButton' onClick={this.handleGeneration}>
             <Paragraph>Générer</Paragraph>
+            <img src='/random.png' />
           </button>
           {state.selectedSentences.length > 0 && (
             <div className='speech'>
@@ -314,11 +312,4 @@ export default class App extends Component {
       </div>
     )
   }
-}
-
-function wiggle (step = 0, limit = 1, delay = 0, action = () => {}, callback = () => {}) {
-  action()
-  return (step <= limit)
-    ? setTimeout(e => wiggle(step + 1, limit, delay, action, callback), delay)
-    : callback()
 }

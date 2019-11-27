@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import * as serviceWorker from './serviceWorker'
-import App from './App'
+import Voeux from './Voeux'
 import config from './config'
 import 'whatwg-fetch'
 
@@ -174,7 +174,7 @@ class AppWrapper extends Component {
         <link rel='stylesheet' href={`${statics_url}/styles/apps/${stylesheet}`} />
         <link rel='stylesheet' href='./custom.css' />
       </Helmet>
-      <App {...props} />
+      <Voeux {...props} />
     </div>
   }
 }
