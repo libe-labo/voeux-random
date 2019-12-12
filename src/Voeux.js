@@ -172,7 +172,6 @@ export default class App extends Component {
     for (let i = 0; i < length; i++) {
       const size = Math.random() > 0.8 ? (Math.random() > 0.5 ? 'short' : 'medium') : 'long'
       const sentence = this.getRandomSentence(size, themes)
-      console.log(sentence.sentence, sentence.themes)
       themes = Math.random() < 0.8 ? sentence.themes : ['bullshit']
       paragraph.push(sentence)
     }
@@ -203,7 +202,6 @@ export default class App extends Component {
 
   generateShareLink () {
     const data = this.state.selectedSentences.map(e => e.toString(36)).join(';')
-    console.log(`${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`)
     return `${this.props.meta.url}?res=${window.encodeURI(window.btoa(data))}`
   }
 
