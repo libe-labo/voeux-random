@@ -3,7 +3,7 @@ const config = {
     author: '',
     title: 'Libération.fr - Générateur de vœux présidentiels',
     url: 'https://www.liberation.fr/apps/2019/12/voeux-presidentiels',
-    description: '',
+    description: 'https://www.liberation.fr/apps/2019/12/voeux-presidentiels/social.jpg',
     image: '',
     xiti_id: 'voeux-presidentiels',
     tweet: 'Voici mon discours de vœux présidentiels. Générez le votre sur @libe !'
