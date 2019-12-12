@@ -235,7 +235,7 @@ export default class App extends Component {
               <div className='speech'>
                 <button className='generateButton' onClick={this.handleGeneration}>
                   <Paragraph>Générer</Paragraph>
-                  <img src='/random.png' />
+                  <img src='./random.png' />
                 </button>
                 <Paragraph small>
                   {state.selectedSentences.slice(0, 2)
