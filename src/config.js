@@ -2,19 +2,18 @@ const config = {
   meta: {
     author: '',
     title: 'Vœux présidentiels',
-    url: 'localhost:3000/',
+    url: '',
     description: '',
     image: '',
     xiti_id: 'test',
-    tweet: '',
-    konami: 'https://github.com/libe-max'
+    tweet: ''
   },
   tracking: {
     active: false,
     format: 'libe-apps-template',
     article: 'libe-apps-template'
   },
-  show_header: true,
+  show_header: false,
   statics_url: process.env.NODE_ENV === 'production'
     ? 'https://www.liberation.fr/apps/static'
     : 'http://localhost:3003',

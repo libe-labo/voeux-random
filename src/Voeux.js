@@ -16,7 +16,7 @@ export default class App extends Component {
    * * * * * * * * * * * * * * * * */
   constructor () {
     super()
-    this.c = 'lblb-some-app'
+    this.c = 'voeux-presidents'
     this.state = {
       loading_sheet: true,
       error_sheet: null,
@@ -224,90 +224,97 @@ export default class App extends Component {
     if (state.loading_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-loader'><Loader /></div></div>
     if (state.error_sheet) return <div className={classes.join(' ')}><div className='lblb-default-apps-error'><LoadingError /></div></div>
 
-    console.log(state.sentences)
-
     /* Display component */
     return (
       <div className={classes.join(' ')}>
         <div className='lblb-default-apps-footer'>
           <BlockTitle>Essayez notre générateur de vœux présidentiels&nbsp;!</BlockTitle>
-          <button className='generateButton' onClick={this.handleGeneration}>
-            <Paragraph>Générer</Paragraph>
-            <img src='/random.png' />
-          </button>
-          {state.selectedSentences.length > 0 && (
-            <div className='speech'>
-              <Paragraph small>
-                {state.selectedSentences.slice(0, 2)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
-              <Paragraph small>
-                {state.selectedSentences.slice(2, 6)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
-              <Paragraph small>
-                {state.selectedSentences.slice(6, 10)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
-              <Paragraph small>
-                {state.selectedSentences.slice(10, 14)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
-              <Paragraph small>
-                {state.selectedSentences.slice(14, 17)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
-              <Paragraph small>
-                {state.selectedSentences.slice(17)
-                  .map(index => state.sentences[index])
-                  .map(this.renderSentence)}
-              </Paragraph>
+          <div className='container'>
+            <div className='image'>
+              <img src='./image.gif' />
             </div>
-          )}
-          {state.selectedSentences.length === 0 && (<div className='speech'>
-            <Paragraph small>
-              {this.getParagraph(1, ['first'])
-                .map(this.renderSentence)}
-              {this.getParagraph(1, ['intro'])
-                .map(this.renderSentence)}
-            </Paragraph>
-            <Paragraph small>
-              {this.getParagraph(4, ['crise'])
-                .map(this.renderSentence)}
-            </Paragraph>
-            <Paragraph small>
-              {this.getParagraph(4, ['réforme', 'économie'])
-                .map(this.renderSentence)}
-            </Paragraph>
-            <Paragraph small>
-              {this.getParagraph(4, ['international', 'éducation', 'écologie'])
-                .map(this.renderSentence)}
-            </Paragraph>
-            <Paragraph small>
-              {this.getParagraph(3, ['france'])
-                .map(this.renderSentence)}
-            </Paragraph>
-            <Paragraph small>
-              {this.getParagraph(1, ['last'])
-                .map(this.renderSentence)}
-            </Paragraph>
-          </div>)}
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            {state.selectedSentences.length > 0 && (
+              <div className='speech'>
+                <button className='generateButton' onClick={this.handleGeneration}>
+                  <Paragraph>Générer</Paragraph>
+                  <img src='/random.png' />
+                </button>
+                <Paragraph small>
+                  {state.selectedSentences.slice(0, 2)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+                <Paragraph small>
+                  {state.selectedSentences.slice(2, 6)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+                <Paragraph small>
+                  {state.selectedSentences.slice(6, 10)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+                <Paragraph small>
+                  {state.selectedSentences.slice(10, 14)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+                <Paragraph small>
+                  {state.selectedSentences.slice(14, 17)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+                <Paragraph small>
+                  {state.selectedSentences.slice(17)
+                    .map(index => state.sentences[index])
+                    .map(this.renderSentence)}
+                </Paragraph>
+              </div>
+            )}
+            {state.selectedSentences.length === 0 && (<div className='speech'>
+              <button className='generateButton' onClick={this.handleGeneration}>
+                <Paragraph>Générer</Paragraph>
+                <img src='/random.png' />
+              </button>
+              <Paragraph small>
+                {this.getParagraph(1, ['first'])
+                  .map(this.renderSentence)}
+                {this.getParagraph(1, ['intro'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {this.getParagraph(4, ['crise'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {this.getParagraph(4, ['réforme', 'économie'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {this.getParagraph(4, ['international', 'éducation', 'écologie'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {this.getParagraph(3, ['france'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+              <Paragraph small>
+                {this.getParagraph(1, ['last'])
+                  .map(this.renderSentence)}
+              </Paragraph>
+            </div>)}
+          </div>
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'flex-start'}}>
             <BlockTitle>Partagez votre discours&nbsp;!</BlockTitle>
+            <br />
             <ShareArticle short iconsOnly tweet={props.meta.tweet} url={this.generateShareLink()} />
           </div>
-          <ArticleMeta
-            publishedOn='02/09/2019 17:13' updatedOn='03/09/2019 10:36' authors={[
-              { name: 'Savinien de Rivet', role: '', link: 'www.liberation.fr' },
-              { name: 'Maxime Fabas', role: 'Production', link: 'lol.com' },
-              { name: 'Tom Février', role: 'Production', link: 'lol.com' }
-            ]}
-          />
+          <div style={{alignSelf: 'flex-start'}}>
+            <ArticleMeta authors={[
+              { name: 'Tom Février', role: 'Production' },
+              { name: 'Libé Labo', role: 'Production', link: 'https://www.liberation.fr/libe-labo-data-nouveaux-formats,100538' }
+            ]} />
+            </div>
         </div>
       </div>
     )
