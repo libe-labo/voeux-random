@@ -49,9 +49,7 @@ async function build () {
 
   // Add meta tags
   console.log('\nAdding meta tags')
-  console.log(config.spreadsheet)
-  console.log(await fetchSheet(config.spreadsheet) )
-  const { title, url, description, author, image } = await fetchSheet(config.spreadsheet)
+  const { title, url, description, author, image } = config.meta
   const $ = cheerio.load(fileData)
   $('head').append(`
     <title>Libération.fr – ${title}</title>

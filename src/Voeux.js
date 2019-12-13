@@ -267,12 +267,22 @@ export default class App extends Component {
                     .map(index => state.sentences[index])
                     .map(this.renderSentence)}
                 </Paragraph>
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'flex-start', marginTop: '1rem'}}>
+                  <BlockTitle>Partagez votre discours&nbsp;!</BlockTitle>
+                  <br />
+                  <ShareArticle short iconsOnly tweet={props.meta.tweet} url={this.generateShareLink()} />
+                </div>
+                <div style={{alignSelf: 'flex-start'}}>
+                  <ArticleMeta authors={[
+                    { name: 'Tom Février', role: 'Production' },
+                    { name: 'Libé Labo', role: 'Production', link: 'https://www.liberation.fr/libe-labo-data-nouveaux-formats,100538' }]} />
+                </div>
               </div>
             )}
             {state.selectedSentences.length === 0 && (<div className='speech'>
               <button className='generateButton' onClick={this.handleGeneration}>
                 <Paragraph>Générer</Paragraph>
-                <img src='/random.png' />
+                <img src='./random.png' />
               </button>
               <Paragraph small>
                 {this.getParagraph(1, ['first'])
@@ -300,19 +310,18 @@ export default class App extends Component {
                 {this.getParagraph(1, ['last'])
                   .map(this.renderSentence)}
               </Paragraph>
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'flex-start', marginTop: '1rem'}}>
+                <BlockTitle>Partagez votre discours&nbsp;!</BlockTitle>
+                <br />
+                <ShareArticle short iconsOnly tweet={props.meta.tweet} url={this.generateShareLink()} />
+              </div>
+              <div style={{alignSelf: 'flex-start'}}>
+                <ArticleMeta authors={[
+                  { name: 'Tom Février', role: 'Production' },
+                  { name: 'Libé Labo', role: 'Production', link: 'https://www.liberation.fr/libe-labo-data-nouveaux-formats,100538' }]} />
+              </div>
             </div>)}
           </div>
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'flex-start'}}>
-            <BlockTitle>Partagez votre discours&nbsp;!</BlockTitle>
-            <br />
-            <ShareArticle short iconsOnly tweet={props.meta.tweet} url={this.generateShareLink()} />
-          </div>
-          <div style={{alignSelf: 'flex-start'}}>
-            <ArticleMeta authors={[
-              { name: 'Tom Février', role: 'Production' },
-              { name: 'Libé Labo', role: 'Production', link: 'https://www.liberation.fr/libe-labo-data-nouveaux-formats,100538' }
-            ]} />
-            </div>
         </div>
       </div>
     )
