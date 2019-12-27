@@ -118,7 +118,7 @@ export default class App extends Component {
   }
 
   handleGeneration () {
-    const paragraphs = document.querySelectorAll('.speech .lblb-paragraph')
+    const paragraphs = document.querySelectorAll('.speech .lblb-paragraph:not(:first-child')
     this.wiggle(0, 20, 20,
       () => {
         paragraphs.forEach(p => {
@@ -172,7 +172,7 @@ export default class App extends Component {
     for (let i = 0; i < length; i++) {
       const size = Math.random() > 0.8 ? (Math.random() > 0.5 ? 'short' : 'medium') : 'long'
       const sentence = this.getRandomSentence(size, themes)
-      themes = Math.random() < 0.8 ? sentence.themes : ['bullshit']
+      themes = Math.random() < 0.8 ? sentence.themes : ['banalites']
       paragraph.push(sentence)
     }
     return paragraph
