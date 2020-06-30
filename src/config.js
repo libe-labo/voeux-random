@@ -21,7 +21,7 @@ const config = {
     ? 'https://libe-labo-2.site/api'
     : 'http://localhost:3004/api',
   stylesheet: 'voeux.css',
-  spreadsheet: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPOqf8JGmbxsd3C_qIWCSbm-vZ-WWK9yF_Y0kUz_SY5-yDZ2PIcKQl9IPgJPeIW_ZYe5vyzWEVv_tH/pub?gid=155317366&single=true&output=tsv' // The spreadsheet providing data to the app
+  spreadsheet: './data.tsv' // The spreadsheet providing data to the app
 }
 
 module.exports = config
